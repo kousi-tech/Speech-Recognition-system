@@ -1,0 +1,101 @@
+import win32api
+import pyttsx3
+import speech_recognition as sr
+import datetime
+import wikipedia
+import webbrowser
+import os
+import smtplib
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice',voices[1].id)     # 0 for Male voice and 1 for female voice
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+def wishme():
+    hour = int(datetime.datetime.now().hour)
+    if hour >= 0 and hour <= 12:
+        speak("Good Morning My Dear Friend")     #anything need to be spoken we need to use speak function
+    elif hour >=12 and hour <= 18:
+        speak("Good Afternoon My Dear Friend")
+    else:
+        speak("Good Evening My dear friend")
+    speak("Let me know how can i help you , what are you looking for ?")
+
+def takecommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening to you Kousalya....")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        print("Recognizing your voice....")
+        query = r.recognize_google(audio, language='en-in')
+        print(f"My dear friend you said :n{query}\n")
+
+    except Exception as e:
+        print("kousalya say that again please....")
+        return "None"
+    return query
+
+def sendemail(to, content):
+    server = smtplib.SMTP('smtp.gmail.com',587)
+    server.ehlo()
+    server.starttls()
+    server.login('curiostats@gmail.com','Isth#1005')
+    server.sendmail('curiostats@gmail.com', to, content)
+    server.close()
+
+
+if __name__ == '__main__':
+    wishme()
+
+    while True:
+        query = takecommand().lower()
+
+        if 'open wikipedia' in query:
+            speak('searching wikipedia....')
+            query = query.replace("wikipedia","")
+            results = wikipedia.summary(query, sentences=2)
+            speak("According to wikipedia ")
+            print(results)
+            speak(results)
+
+        if 'open notepad' in query:
+            npath = "C:\\Windows\\system32\notepad.exe"
+            os.startfile(npath)
+        
+        elif 'open paint' in query:
+            npath = "C:\\Windows\\system32\mspaint.exe"
+            os.startfile(npath)
+
+        elif 'open youtube' in query:
+            webbrowser.open('Youtube.com')
+
+        elif 'open great learning academy' in query:
+            webbrowser.open("https://www.mygreatlearning.com/")
+
+        elif 'open google' in query:
+            webbrowser.open("https://www.google.com/")
+
+        elif 'tell me the time' in query:
+            strTime = datetime.datetime.now().strftime("%H:%M:%S")
+            speak(f"My dear friend, the time is {strTime}")
+
+        elif 'open great learning youtube channel' in query:
+            webbrowser.open("https://www.youtube.com/@greatlearning")
+        
+        elif 'open linkedIn' in query:
+            webbrowser.open("https://www.linkedin.com")
+
+        
+
+
+
+        
+
+
